@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev":"ts-node-dev --inspect --ignore-watch node_modules src/server.ts",
+    "dev": "ts-node-dev --inspect --ignore-watch node_modules src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,8 @@
     "typescript": "^4.3.2"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "knex": "^0.95.6",
+    "pg": "^8.6.0"
   }
 }
