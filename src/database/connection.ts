@@ -1,15 +1,13 @@
 import knex from 'knex';
 
 const connection = knex({
-    client: 'pg',
-    version: '8.6.0',
-    connection: {
-    host : '127.0.0.1', //<--adicionar esta linha
+  client: 'pg',
+  version: '7.2',
+  connection: {
+    host : '127.0.0.1',
     user : 'postgres',
     password : 'postgres',
-    database : 'myapp_test',
-    port: 5432
+    database : 'myapp_test'
   }
-});
-
+})
 export default connection;
