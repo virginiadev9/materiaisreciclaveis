@@ -1,5 +1,5 @@
 import {Router} from 'express';
-
+import itemsRoutes from './items.routes';
 const routes = Router();
 
 routes.get('',(request,response)=>{
@@ -9,6 +9,7 @@ routes.get('',(request,response)=>{
         {fronend:"utilizando Anguçlar"}
     ]);
 });
+routes.use('/items',itemsRoutes);//não esta sendo criada, esta usando então "routes.use"
 
 
 export default routes;
