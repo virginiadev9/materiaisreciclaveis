@@ -3,25 +3,31 @@ import connection from '../database/connection';
 
 const locationsRoutes = Router();
 
-locationsRoutes.post('/',async(request,response)=>{//post, vamos criar, entao vamos receber do request.body as infos e criar no bd
+locationsRoutes.post('/',async(request,response)=>{
     const {name,image,email,whatsapp,latitude,longitude,cidade,uf,items} = request.body;
-    
-    const location = {image:'fake-image.jpg',name,email,whatsapp,latitude,longitude,cidade,uf,
-    items};//no resto name=name,email=email entao nem precisa colocar o types crit ja reconhece(é uma propriedade que typescript tem)
-    
-    const newIds= await connection('locations').insert(location); //newIds é um array -> esta o retorno do id do objeto que foi colocado no banco de dados;
-    
-    const locationID = newIds[0];
+    // inializamos a transação
+    const transaction = await connection.transaction();
+
+        const location = {image:'fake-image.jpg',name,email,whatsapp,latitude,longitude,cidade,uf,
+        items};
+        
+        const newIds= await transaction('locations').insert(location); 
+        
+        const locationID = newIds[0];
 
 
-    //#resolve inserção na tabela pivoo também
-    const locations_it = items.map((item_id:number)=>{
-        return {
-            item_id,
-            locations_id:locationID
-        }
-    });
-    await connection("locations_items").insert(locations_it);
+        //#resolve inserção na tabela pivoo também
+        const locations_it = items.map((item_id:number)=>{
+            return {
+                item_id,
+                locations_id:locationID
+            }
+        });
+        await transaction("locations_items").insert(locations_it);
+    // damos o commit
+    await transaction.commit();
+
+    
     return response.json({
         id :locationID,
         ...location                         //spred operator
