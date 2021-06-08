@@ -17,7 +17,11 @@ locationsRoutes.post('/',async(request,response)=>{
 
 
         //#resolve inserção na tabela pivoo também
-        const locations_it = items.map((item_id:number)=>{
+        const locations_it = items.map(async(item_id:number)=>{
+            const selecttedItem = await transaction('items').where('id',item_id).first();
+            if(!selecttedItem){
+                return response.status(400).json({message:'Item que informou não encontrado ou não existe.'});
+            }
             return {
                 item_id,
                 locations_id:locationID
