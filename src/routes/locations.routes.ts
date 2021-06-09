@@ -1,7 +1,10 @@
 import {Router} from 'express';
 import connection from '../database/connection';
+import multer from 'multer';
+import multerConfig from '../config/multer';
 
 const locationsRoutes = Router();
+const uploads = multer(multerConfig);
 
 locationsRoutes.post('/',async(request,response)=>{
     const {name,image,email,whatsapp,latitude,longitude,cidade,uf,items} = request.body;
@@ -56,6 +59,17 @@ locationsRoutes.get('/',async(request,response)=>{
     .whereIn('locations_items.item_id',parseItems).where('cidade',String(cidade)).where('uf',String(uf)).distinct().select('locations.*');
 
     return response.json(locations);
+});
+locationsRoutes.put('/:id',uploads.single('image'),async(request,response)=>{
+    const { id } = request.params;
+    const image = request.file.filename;
+    const location = await connection('locations').where('id',id).first();
+    if(!location){
+        return response.status(400).json({message: 'locations not found'});
+    }
+    const locationUpdate ={...location,image}
+    await connection('locations').update(locationUpdate).where('id',id);
+    return response.json(locationUpdate);
 });
 
 export default locationsRoutes;
