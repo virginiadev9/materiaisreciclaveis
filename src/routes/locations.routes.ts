@@ -37,4 +37,15 @@ locationsRoutes.post('/',async(request,response)=>{
         ...location                         //spred operator
     });
 });
+locationsRoutes.get('/:id',async(request,response)=>{
+    const { id } = request.params;
+    const location = await connection('locations').where('id',id).first();//first serve pra pegar so 1 e não uym array
+    if(!location){
+        return response.status(400).json({message:'Location not faund'});
+    }
+    const items = await connection('items').join('locations_items','items.id','=','locations_items.items_id').where('locations_items.locations_id',id).
+    select('items.titulo');
+
+    return response.json({location,items});
+});
 export default locationsRoutes;
