@@ -48,4 +48,14 @@ locationsRoutes.get('/:id',async(request,response)=>{
 
     return response.json({location,items});
 });
+locationsRoutes.get('/',async(request,response)=>{
+    const { cidade,uf,items } = request.query;
+    const parseItems =<any>String(items).split(',').map(item=>Number(item.trim()));
+
+    const locations = await connection('locations').join('locations_items','locations.id','=','locations_items.locations_id')
+    .whereIn('locations_items.item_id',parseItems).where('cidade',String(cidade)).where('uf',String(uf)).distinct().select('locations.*');
+
+    return response.json(locations);
+});
+
 export default locationsRoutes;
